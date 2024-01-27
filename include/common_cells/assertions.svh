@@ -89,7 +89,7 @@
 
 // Assert a concurrent property directly.
 // It can be called as a module (or interface) body item.
-`define ASSERT(__name, __prop, __clk = `ASSERT_DEFAULT_CLK, __rst = `ASSERT_DEFAULT_RST) \
+`define ASSERT(__name, __prop, __clk, __rst) \
 `ifdef INC_ASSERT                                                                        \
   __name: assert property (@(posedge __clk) disable iff ((__rst) !== '0) (__prop))       \
     else begin                                                                           \
@@ -102,7 +102,7 @@
 // assertion.
 
 // Assert a concurrent property NEVER happens
-`define ASSERT_NEVER(__name, __prop, __clk = `ASSERT_DEFAULT_CLK, __rst = `ASSERT_DEFAULT_RST) \
+`define ASSERT_NEVER(__name, __prop, __clk, __rst) \
 `ifdef INC_ASSERT                                                                              \
   __name: assert property (@(posedge __clk) disable iff ((__rst) !== '0) not (__prop))         \
     else begin                                                                                 \
@@ -112,13 +112,13 @@
 
 // Assert that signal has a known value (each bit is either '0' or '1') after reset.
 // It can be called as a module (or interface) body item.
-`define ASSERT_KNOWN(__name, __sig, __clk = `ASSERT_DEFAULT_CLK, __rst = `ASSERT_DEFAULT_RST) \
+`define ASSERT_KNOWN(__name, __sig, __clk, __rst) \
 `ifdef INC_ASSERT                                                                             \
   `ASSERT(__name, !$isunknown(__sig), __clk, __rst)                                           \
 `endif
 
 //  Cover a concurrent property
-`define COVER(__name, __prop, __clk = `ASSERT_DEFAULT_CLK, __rst = `ASSERT_DEFAULT_RST) \
+`define COVER(__name, __prop, __clk, __rst) \
 `ifdef INC_ASSERT                                                                       \
   __name: cover property (@(posedge __clk) disable iff ((__rst) !== '0) (__prop));      \
 `endif
@@ -128,21 +128,21 @@
 //////////////////////////////
 
 // Assert that signal is an active-high pulse with pulse length of 1 clock cycle
-`define ASSERT_PULSE(__name, __sig, __clk = `ASSERT_DEFAULT_CLK, __rst = `ASSERT_DEFAULT_RST) \
+`define ASSERT_PULSE(__name, __sig, __clk, __rst) \
 `ifdef INC_ASSERT                                                                             \
   `ASSERT(__name, $rose(__sig) |=> !(__sig), __clk, __rst)                                    \
 `endif
 
 // Assert that a property is true only when an enable signal is set.  It can be called as a module
 // (or interface) body item.
-`define ASSERT_IF(__name, __prop, __enable, __clk = `ASSERT_DEFAULT_CLK, __rst = `ASSERT_DEFAULT_RST) \
+`define ASSERT_IF(__name, __prop, __enable, __clk, __rst) \
 `ifdef INC_ASSERT                                                                                     \
   `ASSERT(__name, (__enable) |-> (__prop), __clk, __rst)                                              \
 `endif
 
 // Assert that signal has a known value (each bit is either '0' or '1') after reset if enable is
 // set.  It can be called as a module (or interface) body item.
-`define ASSERT_KNOWN_IF(__name, __sig, __enable, __clk = `ASSERT_DEFAULT_CLK, __rst = `ASSERT_DEFAULT_RST) \
+`define ASSERT_KNOWN_IF(__name, __sig, __enable, __clk, __rst) \
 `ifdef INC_ASSERT                                                                                          \
   `ASSERT_KNOWN(__name``KnownEnable, __enable, __clk, __rst)                                               \
   `ASSERT_IF(__name, !$isunknown(__sig), __enable, __clk, __rst)                                           \
@@ -153,7 +153,7 @@
 ///////////////////////
 
 // Assume a concurrent property
-`define ASSUME(__name, __prop, __clk = `ASSERT_DEFAULT_CLK, __rst = `ASSERT_DEFAULT_RST) \
+`define ASSUME(__name, __prop, __clk, __rst) \
 `ifdef INC_ASSERT                                                                        \
   __name: assume property (@(posedge __clk) disable iff ((__rst) !== '0) (__prop))       \
     else begin                                                                           \
@@ -179,7 +179,7 @@
 
 // ASSUME_FPV
 // Assume a concurrent property during formal verification only.
-`define ASSUME_FPV(__name, __prop, __clk = `ASSERT_DEFAULT_CLK, __rst = `ASSERT_DEFAULT_RST) \
+`define ASSUME_FPV(__name, __prop, __clk, __rst) \
 `ifdef FPV_ON                                                                                \
    `ASSUME(__name, __prop, __clk, __rst)                                                     \
 `endif
@@ -193,7 +193,7 @@
 
 // COVER_FPV
 // Cover a concurrent property during formal verification
-`define COVER_FPV(__name, __prop, __clk = `ASSERT_DEFAULT_CLK, __rst = `ASSERT_DEFAULT_RST) \
+`define COVER_FPV(__name, __prop, __clk, __rst) \
 `ifdef FPV_ON                                                                               \
    `COVER(__name, __prop, __clk, __rst)                                                     \
 `endif
